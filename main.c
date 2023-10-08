@@ -136,22 +136,27 @@ int main() {
         C_t[i] = 0;
         ht[i] = 0;
     }
-    printf("Please input initial C_0\n");
+    double C0[hidden_size] , h0[hidden_size] ;
+    printf("Please input initial C0\n");
     for(int i = 0;i < hidden_size;i++){
-        scanf("%f",&C_t[i]);
+        scanf("%f",&C0[i]);
     }
-    printf("Please input initial ht\n");
+    printf("Please input initial h0\n");
     for(int i = 0;i < hidden_size;i++){
-        scanf("%f",&ht[i]);
+        scanf("%f",&h0[i]);
     }
+
+    //用来存每一层的ht输出组成的矩阵
+    double output_matrix[hidden_size][seq_len];
 
 
     //正式开始计算！
-    for(int layer_idx=1;layer_idx<num_layers;layer_idx++){
+    for(int layer_idx=0;layer_idx<num_layers;layer_idx++){
 
         for(int seq_idx=0;seq_idx<seq_len;seq_idx++){
             //calculate and update
-            
+
+
         }
     }
 
