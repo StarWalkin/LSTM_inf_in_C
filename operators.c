@@ -50,4 +50,14 @@ double dot_product(double arr1[],double arr2[],int size){
     return res;
 }
 
+void vector_add(double v1[],double v2[],int n,double res[]){
+    for(int i = 0;i <n;i ++){
+        res[i] = v1[i]+v2[i];
+    }
+}
 
+void hadamard_pro(double v1[],double v2[],int n,double res[]){
+    for(int i = 0;i <n;i ++){
+        res[i] = v1[i]*v2[i];
+    }
+}

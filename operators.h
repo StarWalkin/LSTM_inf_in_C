@@ -12,4 +12,6 @@ void print_mat(double *mat,int row,int col);
 double sigmoid(double x);
 double tanh(double x);
 double dot_product(double arr1[],double arr2[],int size);
+void vector_add(double v1[],double v2[],int n,double res[]);
+void hadamard_pro(double v1[],double v2[],int n,double res[]);
 #endif //LSTM_INF_IN_C_OPERATORS_H

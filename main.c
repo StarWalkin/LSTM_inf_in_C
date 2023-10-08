@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "operators.h"
 
 //// 随机初始化矩阵的函数
 //void generate_random_matrix(int rows, int cols, float matrix[rows][cols]) {
@@ -97,12 +98,12 @@ int main() {
     }
 
     //遗忘门计算时的bias
-    double bf[num_layers*hidden_size];
+    double bf[num_layers][hidden_size];
     //下面记忆门对应的bias
-    double bi[num_layers*hidden_size];
-    double bc[num_layers*hidden_size];
+    double bi[num_layers][hidden_size];
+    double bc[num_layers][hidden_size];
     //输出门对应的bias
-    double bo[num_layers*hidden_size];
+    double bo[num_layers][hidden_size];
 
    //输入所有bias
     for (int layer_idx = 1;layer_idx <= num_layers;layer_idx++){
@@ -146,20 +147,100 @@ int main() {
         scanf("%f",&h0[i]);
     }
 
+    //输入序列
+    double input_matrix[seq_len][input_size];
+    printf("input the input matrix:");
+    for(int i = 0;i < seq_len;i ++){
+        printf("%d th vector:\n",i+1);
+        for(int j = 0;j < input_size;j ++){
+            scanf("%f",&input_matrix[i][j]);
+        }
+    }
+
     //用来存每一层的ht输出组成的矩阵
-    double output_matrix[hidden_size][seq_len];
+    double output_matrix[seq_len][hidden_size];
+
 
 
     //正式开始计算！
+    double ft[hidden_size],it[hidden_size],C_t1[hidden_size],ot[hidden_size];
     for(int layer_idx=0;layer_idx<num_layers;layer_idx++){
 
         for(int seq_idx=0;seq_idx<seq_len;seq_idx++){
             //calculate and update
 
 
+            if(layer_idx == 0){
+                //先拼接前一个cell的输出和这个cell对应的输入
+                double cat_res[input_size+hidden_size];
+                if(layer_idx == 0){
+                    if(seq_idx == 0) cat_vector(input_matrix[0],input_size,h0,hidden_size,cat_res);
+                    else cat_vector(input_matrix[seq_idx],input_size,ht,hidden_size,cat_res);
+                }
+
+                //遗忘门
+                double tmp[hidden_size];
+                matrix_mul(Wf0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,ft);
+                for(int i = 0;i < hidden_size;i++){
+                    ft[i] = sigmoid(ft[i]);
+                }
+
+                //输入门
+                matrix_mul(Wi0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,it);
+                for(int i = 0;i < hidden_size;i++){
+                    it[i] = sigmoid(it[i]);
+                }
+
+                matrix_mul(Wc0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,C_t1);
+                for(int i = 0;i < hidden_size;i++){
+                    C_t1[i] = tanh(C_t1[i]);
+                }
+
+                //Cell State
+                double c1[hidden_size],c2[hidden_size];
+                hadamard_pro(ft,C_t,hidden_size,c1);
+                hadamard_pro(it,C_t1,hidden_size,c2);
+                vector_add(c1,c2,hidden_size,C_t);
+
+                //Output
+                matrix_mul(Wo0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,ot);
+                for(int i = 0;i < hidden_size;i++){
+                    ot[i] = sigmoid(ot[i]);
+                }
+
+                //derive ht
+                for(int i = 0;i < hidden_size;i++){
+                    ht[i] = tanh(C_t[i])*ot[i];
+                    output_matrix[seq_idx][i] = ht[i];
+                }
+
+            }
+
+
+
+
+//            if(layer_idx > 0){
+//                double tmp[hidden_size];
+//                matrix_mul(Wf0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+//                vector_add(tmp,bf[layer_idx],hidden_size,ft);
+//                for(int i = 0;i < hidden_size;i++){
+//                    ft[i] = sigmoid(ft[i]);
+//                }
+//            }
+
         }
     }
 
+    for(int i = 0;i <seq_len;i ++){
+        printf("\noutput %d:\n",i);
+        for(int j = 0;j < hidden_size;j ++){
+            printf("%f  ",output_matrix[i][j]);
+        }
+    }
 
 
     return 0;
