@@ -20,3 +20,17 @@
 //
 //
 //
+
+//// 随机初始化矩阵的函数
+//void generate_random_matrix(int rows, int cols, float matrix[rows][cols]) {
+//    // 使用时间作为随机数种子
+//    srand(time(NULL));
+//    // 填充矩阵的每个元素为随机浮点数（范围在0到1之间）
+//    for (int i = 0; i < rows; i++) {
+//        for (int j = 0; j < cols; j++) {
+//            matrix[i][j] = (double)rand() / RAND_MAX;  // 生成0到1之间的随机浮点数
+//        }
+//    }
+//}
+//
+//
