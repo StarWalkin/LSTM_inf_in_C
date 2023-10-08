@@ -55,44 +55,49 @@ int main() {
     //然后来写一段读入第一层权重矩阵的程序
     printf("Wf0,size:%d * %d\n",hidden_size,input_size+hidden_size);
     for(int i = 0;i < hidden_size*(input_size+hidden_size);i ++){
-        scanf("%f",&Wf0[i]);
+        scanf("%lf",&Wf0[i]);
     }
     printf("\nWi0,size:%d * %d\n",hidden_size,input_size+hidden_size);
     for(int i = 0;i < hidden_size*(input_size+hidden_size);i ++){
-        scanf("%f",&Wi0[i]);
+        scanf("%lf",&Wi0[i]);
     }
     printf("\nWc0,size:%d * %d\n",hidden_size,input_size+hidden_size);
     for(int i = 0;i < hidden_size*(input_size+hidden_size);i ++){
-        scanf("%f",&Wc0[i]);
+        scanf("%lf",&Wc0[i]);
     }
     printf("\nWo0,size:%d * %d\n",hidden_size,input_size+hidden_size);
     for(int i = 0;i < hidden_size*(input_size+hidden_size);i ++){
-        scanf("%f",&Wo0[i]);
+        scanf("%lf",&Wo0[i]);
     }
     //如果有多层，还需要输入上面几层的权重矩阵
+    double Wf[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+    double Wi[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+    double Wc[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+    double Wo[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+
     if(num_layers > 1){
-        double Wf[(num_layers-1)*((hidden_size)*(2*hidden_size))];
-        double Wi[(num_layers-1)*((hidden_size)*(2*hidden_size))];
-        double Wc[(num_layers-1)*((hidden_size)*(2*hidden_size))];
-        double Wo[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+//        double Wf[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+//        double Wi[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+//        double Wc[(num_layers-1)*((hidden_size)*(2*hidden_size))];
+//        double Wo[(num_layers-1)*((hidden_size)*(2*hidden_size))];
 
         for(int layer_idx = 0;layer_idx < num_layers-1;layer_idx++){
             printf("\nThe %dth layer:\n",layer_idx+2);
             printf("Wf,size:%d * %d\n",hidden_size,2*hidden_size);
             for(int i = 0;i < ((hidden_size)*(2*hidden_size));i ++){
-                scanf("%f",&Wf[layer_idx*((hidden_size)*(2*hidden_size))+i]);
+                scanf("%lf",&Wf[layer_idx*((hidden_size)*(2*hidden_size))+i]);
             }
             printf("\nWi,size:%d * %d\n",hidden_size,2*hidden_size);
             for(int i = 0;i < ((hidden_size)*(2*hidden_size));i ++){
-                scanf("%f",&Wi0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
+                scanf("%lf",&Wi0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
             }
             printf("\nWc,size:%d * %d\n",hidden_size,2*hidden_size);
             for(int i = 0;i < ((hidden_size)*(2*hidden_size));i ++){
-                scanf("%f",&Wc0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
+                scanf("%lf",&Wc0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
             }
             printf("\nWo,size:%d * %d\n",hidden_size,2*hidden_size);
             for(int i = 0;i < ((hidden_size)*(2*hidden_size));i ++){
-                scanf("%f",&Wo0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
+                scanf("%lf",&Wo0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
             }
         }
     }
@@ -110,19 +115,19 @@ int main() {
         printf("\nThe %dth layer:\n",layer_idx);
         printf("bf:\n");
         for(int i = 0;i < hidden_size;i ++){
-            scanf("%f",&bf[hidden_size*layer_idx+i]);
+            scanf("%lf",&bf[hidden_size*layer_idx+i]);
         }
         printf("bi:\n");
         for(int i = 0;i < hidden_size;i ++){
-            scanf("%f",&bi[hidden_size*layer_idx+i]);
+            scanf("%lf",&bi[hidden_size*layer_idx+i]);
         }
         printf("bc:\n");
         for(int i = 0;i < hidden_size;i ++){
-            scanf("%f",&bc[hidden_size*layer_idx+i]);
+            scanf("%lf",&bc[hidden_size*layer_idx+i]);
         }
         printf("bo:\n");
         for(int i = 0;i < hidden_size;i ++){
-            scanf("%f",&bo[hidden_size*layer_idx+i]);
+            scanf("%lf",&bo[hidden_size*layer_idx+i]);
         }
     }
 
@@ -140,11 +145,11 @@ int main() {
     double C0[hidden_size] , h0[hidden_size] ;
     printf("Please input initial C0\n");
     for(int i = 0;i < hidden_size;i++){
-        scanf("%f",&C0[i]);
+        scanf("%lf",&C0[i]);
     }
     printf("Please input initial h0\n");
     for(int i = 0;i < hidden_size;i++){
-        scanf("%f",&h0[i]);
+        scanf("%lf",&h0[i]);
     }
 
     //输入序列
@@ -153,7 +158,7 @@ int main() {
     for(int i = 0;i < seq_len;i ++){
         printf("%d th vector:\n",i+1);
         for(int j = 0;j < input_size;j ++){
-            scanf("%f",&input_matrix[i][j]);
+            scanf("%lf",&input_matrix[i][j]);
         }
     }
 
@@ -223,14 +228,55 @@ int main() {
 
 
 
-//            if(layer_idx > 0){
-//                double tmp[hidden_size];
-//                matrix_mul(Wf0,cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
-//                vector_add(tmp,bf[layer_idx],hidden_size,ft);
-//                for(int i = 0;i < hidden_size;i++){
-//                    ft[i] = sigmoid(ft[i]);
-//                }
-//            }
+            if(layer_idx > 0){
+                //先拼接前一个cell的输出和这个cell对应的输入
+                double cat_res[2*hidden_size];
+
+                if(seq_idx == 0) cat_vector(output_matrix[0],hidden_size,h0,hidden_size,cat_res);
+                else cat_vector(output_matrix[seq_idx],hidden_size,ht,hidden_size,cat_res);
+
+
+                //遗忘门
+                double tmp[hidden_size];
+                matrix_mul( &Wf[(layer_idx-1)*((hidden_size)*(2*hidden_size))],cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,ft);
+                for(int i = 0;i < hidden_size;i++){
+                    ft[i] = sigmoid(ft[i]);
+                }
+
+                //输入门
+                matrix_mul( &Wi[(layer_idx-1)*((hidden_size)*(2*hidden_size))],cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,it);
+                for(int i = 0;i < hidden_size;i++){
+                    it[i] = sigmoid(it[i]);
+                }
+
+                matrix_mul( &Wc[(layer_idx-1)*((hidden_size)*(2*hidden_size))],cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,C_t1);
+                for(int i = 0;i < hidden_size;i++){
+                    C_t1[i] = tanh(C_t1[i]);
+                }
+
+                //Cell State
+                double c1[hidden_size],c2[hidden_size];
+                hadamard_pro(ft,C_t,hidden_size,c1);
+                hadamard_pro(it,C_t1,hidden_size,c2);
+                vector_add(c1,c2,hidden_size,C_t);
+
+                //Output
+                matrix_mul( &Wo[(layer_idx-1)*((hidden_size)*(2*hidden_size))],cat_res,hidden_size,input_size+hidden_size,input_size+hidden_size,1,tmp);
+                vector_add(tmp,bf[layer_idx],hidden_size,ot);
+                for(int i = 0;i < hidden_size;i++){
+                    ot[i] = sigmoid(ot[i]);
+                }
+
+                //derive ht
+                for(int i = 0;i < hidden_size;i++){
+                    ht[i] = tanh(C_t[i])*ot[i];
+                    output_matrix[seq_idx][i] = ht[i];
+                }
+
+            }
 
         }
     }
@@ -238,7 +284,7 @@ int main() {
     for(int i = 0;i <seq_len;i ++){
         printf("\noutput %d:\n",i);
         for(int j = 0;j < hidden_size;j ++){
-            printf("%f  ",output_matrix[i][j]);
+            printf("%lf  ",output_matrix[i][j]);
         }
     }
 
