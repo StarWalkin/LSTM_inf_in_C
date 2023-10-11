@@ -1,6 +1,6 @@
 import torch
 
-path = '/Users/yuan/Desktop/cprint_test2.c'
+path = '/Users/yuan/Desktop/科研竞赛/ANL-瑞萨项目/LSTM_inf_in_C/initialization.c'
 
 def print_first_layer(input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo):
     strings = []
@@ -23,7 +23,7 @@ def print_first_layer(input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo):
         strings.append("bo[0][{}] = {};".format(i, bo[i]))
 
 
-    with open(path, 'w') as file:
+    with open(path, 'a') as file:
         for i in range(0, len(strings)):
             print(strings[i], file=file)
     print("Successfully printed the first layer!")
