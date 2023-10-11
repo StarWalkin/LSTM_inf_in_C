@@ -7,7 +7,7 @@
 
 int main() {
     //依次表示：输入的特征数量；输出的特征数量；hidden_layer的神经元个数
-    int input_size, hidden_size, num_layers, seq_len;
+    int input_size, hidden_size, num_layers, seq_len, output_size;
 
     // 接收这些输入值
     printf("Please input the input_size, the hidden_size, the seq_len and num_layers in a row: \n");
@@ -84,7 +84,7 @@ int main() {
             }
             printf("\nWo,size:%d * %d\n",hidden_size,2*hidden_size);
             for(int i = 0;i < ((hidden_size)*(2*hidden_size));i ++){
-                scanf("%lf",&Wo0[layer_idx*((hidden_size)*(2*hidden_size))+i]);
+                scanf("%lf",&Wo0[layer_idx*((hiden_size)*(2*hidden_size))+i]);
             }
         }
     }
