@@ -5,7 +5,9 @@ import math
 
 path_h = '/Users/yuan/Desktop/科研竞赛/ANL-瑞萨项目/LSTM_inf_in_C/initialization.h'
 path_c = '/Users/yuan/Desktop/科研竞赛/ANL-瑞萨项目/LSTM_inf_in_C/initialization.c'
-# 创建一个简单的LSTM模型
+
+
+# 创建一个简单的LSTM模型（目的是用于后续比对、验证）
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers):
         super(LSTMModel, self).__init__()
@@ -23,6 +25,7 @@ class LSTMModel(nn.Module):
         # 前向传播
         out, _ = self.lstm(x, (h0, c0))
         return out
+
 
 # 定义模型参数
 input_size = 3  # 输入特征维度
@@ -59,54 +62,118 @@ with torch.no_grad():
 # 打印推理结果
 print("预测结果:", output)
 
+#基本参量在头文件中声明
 
+string_h = ''
+string_h += f"extern int input_size;\n"
+string_h += f"extern int hidden_size;\n"
+string_h += f"extern int num_layers;\n"
+string_h += f"extern int seq_len;\n"
+
+seq_len = 3
+string_h += f"extern double input_matrix[{seq_len}][{input_size}];\n"
+
+size1 = hidden_size*(input_size+hidden_size)
+string_h += f"extern double Wf0[{size1}];\n"
+string_h += f"extern double Wi0[{size1}];\n"
+string_h += f"extern double Wc0[{size1}];\n"
+string_h += f"extern double Wo0[{size1}];\n"
+
+size2 = (num_layers-1)*((hidden_size)*(2*hidden_size))
+string_h += f"extern double Wf[{size2}];\n"
+string_h += f"extern double Wi[{size2}];\n"
+string_h += f"extern double Wc[{size2}];\n"
+string_h += f"extern double Wo[{size2}];\n"
+
+string_h += f"extern double bf[{num_layers}][{hidden_size}];\n"
+string_h += f"extern double bi[{num_layers}][{hidden_size}];\n"
+string_h += f"extern double bc[{num_layers}][{hidden_size}];\n"
+string_h += f"extern double bo[{num_layers}][{hidden_size}];\n"
+
+
+with open(path_h, 'w') as file:
+    print("#ifndef INIT\n#define INIT", file=file)
+    print(string_h, file=file)
+    print("#endif", file=file)
+    print("Successfully printed into the header file!")
+
+
+#头文件写好了，接下来写initialization.c文件
 string_init = ''
+
+#基本参量的初始化
+string_init += '#include "initialization.h"\n'
 string_init += f"int input_size = {input_size};\n"
 string_init += f"int hidden_size = {hidden_size};\n"
 string_init += f"int num_layers = {num_layers};\n"
 string_init += f"int seq_len = {sequence.size(1)};\n"
 
-seq_len = 3
-string_init += f"double input_matrix[{seq_len}][{input_size}] ;"
-
-size1 = hidden_size*(input_size+hidden_size)
-string_init += f"double Wf0[{size1}];\n"
-string_init += f"double Wi0[{size1}];\n"
-string_init += f"double Wc0[{size1}];\n"
-string_init += f"double Wo0[{size1}];\n"
-
-size2 = (num_layers-1)*((hidden_size)*(2*hidden_size))
-string_init += f"double Wf[{size2}];\n"
-string_init += f"double Wi[{size2}];\n"
-string_init += f"double Wc[{size2}];\n"
-string_init += f"double Wo[{size2}];\n"
-
-string_init += f"double bf[{num_layers}][{hidden_size}];\n"
-string_init += f"double bi[{num_layers}][{hidden_size}];\n"
-string_init += f"double bc[{num_layers}][{hidden_size}];\n"
-string_init += f"double bo[{num_layers}][{hidden_size}];\n"
-
-with open(path_h, 'w') as file:
-    print("#ifndef INIT\n#define INIT", file=file)
-    print(string_init, file=file)
-    print("#endif", file=file)
-
 # 获取 sequence 张量的形状
 batch_size, seq_len, input_size = sequence.size()
-
-with open(path_c,"w") as file:
-    print("\n",file=file)
-
-# 使用嵌套循环遍历每个元素
+string_init += f"double input_matrix[{seq_len}][{input_size}] = {{\n"
+# 使用嵌套循环遍历每个元素,从而定义了input_matrix
 for i in range(batch_size):
     for j in range(seq_len):
+        string_init += "{"
         for k in range(input_size):
-            with open(path_c,"a") as file:
-                value = sequence[i, j, k]
-                print(f"input_matrix[{j}][{k}] = {value};\n",file = file)
+            string_init += f"{sequence[i,j,k]},"
+        string_init += "},\n"
+string_init += "};\n"
+
+with open (path_c,'w') as file:
+    print(string_init, file=file)
+print("Basic variables initialized!")
+
+
+# size = hidden_size*(input_size+hidden_size)
+# string_init += f"extern double Wf0[{size1}];\n"
+# string_init += f"double Wi0[{size1}];\n"
+# string_init += f"double Wc0[{size1}];\n"
+# string_init += f"double Wo0[{size1}];\n"
+#
+# size2 = (num_layers-1)*((hidden_size)*(2*hidden_size))
+# string_init += f"double Wf[{size2}];\n"
+# string_init += f"double Wi[{size2}];\n"
+# string_init += f"double Wc[{size2}];\n"
+# string_init += f"double Wo[{size2}];\n"
+#
+# string_init += f"double bf[{num_layers}][{hidden_size}];\n"
+# string_init += f"double bi[{num_layers}][{hidden_size}];\n"
+# string_init += f"double bc[{num_layers}][{hidden_size}];\n"
+# string_init += f"double bo[{num_layers}][{hidden_size}];\n"
+
+# with open(path_h, 'w') as file:
+#     print("#ifndef INIT\n#define INIT", file=file)
+#     print(string_init, file=file)
+#     print("#endif", file=file)
+
+# # 获取 sequence 张量的形状
+# batch_size, seq_len, input_size = sequence.size()
+#
+# with open(path_c,"w") as file:
+#     print("\n",file=file)
+#
+# # 使用嵌套循环遍历每个元素
+# for i in range(batch_size):
+#     for j in range(seq_len):
+#         for k in range(input_size):
+#             with open(path_c,"a") as file:
+#                 value = sequence[i, j, k]
+#                 print(f"input_matrix[{j}][{k}] = {value};\n",file = file)
 
 # 获取所有参数
 params = list(model.named_parameters())
+
+wf_str = f"double Wf[{size2}] = {{"
+wi_str = f"double Wi[{size2}] = {{"
+wc_str = f"double Wc[{size2}] = {{"
+wo_str = f"double Wo[{size2}] = {{"
+
+bf_str = f"double bf[{num_layers}][{hidden_size}] = {{\n"
+bi_str = f"double bi[{num_layers}][{hidden_size}] = {{\n"
+bc_str = f"double bc[{num_layers}][{hidden_size}] = {{\n"
+bo_str = f"double bo[{num_layers}][{hidden_size}] = {{\n"
+
 
 # 遍历参数并打印它们的形状
 for i, (name, param) in enumerate(params):
@@ -155,9 +222,46 @@ for i, (name, param) in enumerate(params):
             bo = torch.add(b_o_1, b_o_2)
 
             if i == 3:
-                print_first_layer(input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo)
+                bf_tmp, bi_tmp, bc_tmp, bo_tmp = print_first_layer(input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo)
+                bf_str += bf_tmp
+                bi_str += bi_tmp
+                bc_str += bc_tmp
+                bo_str += bo_tmp
+
             elif i > 3:
-                print_other_layers(math.floor(i//2),input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo)
+                wf_tmp,wi_tmp,wc_tmp,wo_tmp,bf_tmp,bi_tmp,bc_tmp,bo_tmp = print_other_layers(math.floor(i//4),input_size, hidden_size, wf, wi, wg, wo, bi, bf, bg, bo)
+
+                wf_str += wf_tmp
+                wi_str += wi_tmp
+                wc_str += wc_tmp
+                wo_str += wo_tmp
+
+                bf_str += bf_tmp
+                bi_str += bi_tmp
+                bc_str += bc_tmp
+                bo_str += bo_tmp
+
+
+wf_str += "};\n"
+wi_str += "};\n"
+wc_str += "};\n"
+wo_str += "};\n"
+
+bf_str += "};\n"
+bi_str += "};\n"
+bc_str += "};\n"
+bo_str += "};\n"
+
+with open(path_c,'a') as file:
+    print(wf_str, file=file)
+    print(wi_str, file=file)
+    print(wc_str, file=file)
+    print(wo_str, file=file)
+    print(bf_str, file=file)
+    print(bi_str, file=file)
+    print(bc_str, file=file)
+    print(bo_str, file=file)
+
 
 
         # print(f"偏置矩阵 {i + 1} ({name}) 的形状: {param.shape}")

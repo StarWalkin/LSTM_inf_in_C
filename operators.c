@@ -3,6 +3,15 @@
 
 
 void *matrix_mul(double *m1,double *m2,int row1,int col1,int row2,int col2, double res[]){
+
+    // 初始化结果矩阵为零
+    for (int i = 0; i < row1; i++) {
+        for (int j = 0; j < col2; j++) {
+            res[i * col2 + j] = 0.0;
+        }
+    }
+
+
     if (col1 != row2) printf("Illegal size!");
     for(int idx1=0;idx1<row1;idx1++){
         for(int idx2=0;idx2<col2;idx2++){

@@ -1,20 +1,21 @@
 #ifndef INIT
 #define INIT
-int input_size = 3;
-int hidden_size = 64;
-int num_layers = 3;
-int seq_len = 3;
-double input_matrix[3][3] ;double Wf0[4288];
-double Wi0[4288];
-double Wc0[4288];
-double Wo0[4288];
-double Wf[16384];
-double Wi[16384];
-double Wc[16384];
-double Wo[16384];
-double bf[3][64];
-double bi[3][64];
-double bc[3][64];
-double bo[3][64];
+extern int input_size;
+extern int hidden_size;
+extern int num_layers;
+extern int seq_len;
+extern double input_matrix[3][3];
+extern double Wf0[4288];
+extern double Wi0[4288];
+extern double Wc0[4288];
+extern double Wo0[4288];
+extern double Wf[16384];
+extern double Wi[16384];
+extern double Wc[16384];
+extern double Wo[16384];
+extern double bf[3][64];
+extern double bi[3][64];
+extern double bc[3][64];
+extern double bo[3][64];
 
 #endif

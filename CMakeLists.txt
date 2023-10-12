@@ -4,6 +4,9 @@ project(LSTM_inf_in_C)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(LSTM_inf_in_C main.c
-        operators.h
+        initialization.c
         operators.c
-        trashbin.cpp)
+        )
+
+#ADD_LIBRARY(TEST initialization.c
+#        test.cpp)
