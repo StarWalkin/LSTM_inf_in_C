@@ -174,29 +174,36 @@ bi_str = f"double bi[{num_layers}][{hidden_size}] = {{\n"
 bc_str = f"double bc[{num_layers}][{hidden_size}] = {{\n"
 bo_str = f"double bo[{num_layers}][{hidden_size}] = {{\n"
 
+w_i_1, w_f_1, w_g_1, w_o_1 = None, None, None, None
+w_i_2, w_f_2, w_g_2, w_o_2 = None, None, None, None
+w_i, w_f, w_g, w_o = None, None, None, None
 
 # 遍历参数并打印它们的形状
 for i, (name, param) in enumerate(params):
     if 'weight' in name:
-       print(f"begin:权重矩阵 {i + 1} ({name}) 的形状: {param.shape}")
-       if i%2 == 0:
+        print(f"begin:权重矩阵 {i + 1} ({name}) 的形状: {param.shape}")
+       # print(param)
+        if i % 2 == 0:
             w_i_1 = param[:hidden_size, :]
-            # print("w_ii_1:",w_ii_1)
+            # print("w_i_1:",w_i_1)
             w_f_1 = param[hidden_size:2*hidden_size, :]
             # print("w_if_1:", w_if_1)
             w_g_1 = param[2*hidden_size:3*hidden_size, :]
             # print("w_ig_1:", w_ig_1)
             w_o_1 = param[3*hidden_size:4*hidden_size, :]
             # print("w_io_1:", w_io_1)
-       elif i%2 == 1:
-           w_i_2 = param[:hidden_size, :]
-           w_f_2 = param[hidden_size:2*hidden_size, :]
-           w_g_2 = param[2*hidden_size:3*hidden_size, :]
-           w_o_2 = param[3*hidden_size:4*hidden_size, :]
-           wi = torch.cat((w_i_1, w_i_2), dim=1)
-           wf = torch.cat((w_f_1, w_f_2), dim=1)
-           wg = torch.cat((w_g_1, w_g_2), dim=1)
-           wo = torch.cat((w_o_1, w_o_2), dim=1)
+        elif i % 2 == 1:
+            w_i_2 = param[:hidden_size, :]
+            w_f_2 = param[hidden_size:2*hidden_size, :]
+            w_g_2 = param[2*hidden_size:3*hidden_size, :]
+            w_o_2 = param[3*hidden_size:4*hidden_size, :]
+            # print("w_i_1:",w_i_1)
+            # print("w_i_2:", w_i_2)
+            wi = torch.cat((w_i_1, w_i_2), dim=1)
+            # print("after_cat:",wi)
+            wf = torch.cat((w_f_1, w_f_2), dim=1)
+            wg = torch.cat((w_g_1, w_g_2), dim=1)
+            wo = torch.cat((w_o_1, w_o_2), dim=1)
        # print(f"权重矩阵 {i + 1} ({name}) 的形状: {param.shape}")
 
     elif 'bias' in name:
