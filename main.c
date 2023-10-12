@@ -39,7 +39,6 @@ int main() {
         for (int seq_idx = 0; seq_idx < seq_len; seq_idx++) {
             //calculate and update
 
-
             if (layer_idx == 0) {
                 //先拼接前一个cell的输出和这个cell对应的输入
                 double cat_res[input_size + hidden_size];
@@ -78,23 +77,23 @@ int main() {
 //            }
             vector_add(tmp, bf[layer_idx], hidden_size, ft);
 
-//            for (int i = 0; i < hidden_size; i++) {
+            for (int i = 0; i < hidden_size; i++) {
 //                printf("seq_idx%d\n", seq_idx);
 //                printf("ft%d:%lf\n", i, ft[i]);
-//                ft[i] = sigmoid(ft[i]);
+                  ft[i] = sigmoid(ft[i]);
 //                printf("tmp:%lf\n", tmp[i]);
 //                printf("ft_after:%lf\n", ft[i]);
-//            }
+            }
 
             //输入门
             matrix_mul(Wi0, cat_res, hidden_size, input_size + hidden_size, input_size + hidden_size, 1, tmp);
-            vector_add(tmp, bf[layer_idx], hidden_size, it);
+            vector_add(tmp, bi[layer_idx], hidden_size, it);
             for (int i = 0; i < hidden_size; i++) {
                 it[i] = sigmoid(it[i]);
             }
 
             matrix_mul(Wc0, cat_res, hidden_size, input_size + hidden_size, input_size + hidden_size, 1, tmp);
-            vector_add(tmp, bf[layer_idx], hidden_size, C_t1);
+            vector_add(tmp, bc[layer_idx], hidden_size, C_t1);
             for (int i = 0; i < hidden_size; i++) {
                 C_t1[i] = tanh(C_t1[i]);
             }
@@ -107,7 +106,7 @@ int main() {
 
             //Output
             matrix_mul(Wo0, cat_res, hidden_size, input_size + hidden_size, input_size + hidden_size, 1, tmp);
-            vector_add(tmp, bf[layer_idx], hidden_size, ot);
+            vector_add(tmp, bo[layer_idx], hidden_size, ot);
             for (int i = 0; i < hidden_size; i++) {
                 ot[i] = sigmoid(ot[i]);
             }
@@ -122,6 +121,13 @@ int main() {
 
 
             if (layer_idx > 0) {
+
+                //重新初始化C0和h0
+                for(int i = 0;i < hidden_size;i++){
+                    C_t[i] = 0;
+                    ht[i] = 0;
+                }
+
                 //先拼接前一个cell的输出和这个cell对应的输入
                 double cat_res[2 * hidden_size];
 
@@ -141,14 +147,14 @@ int main() {
                 //输入门
                 matrix_mul(&Wi[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
                            input_size + hidden_size, input_size + hidden_size, 1, tmp);
-                vector_add(tmp, bf[layer_idx], hidden_size, it);
+                vector_add(tmp, bi[layer_idx], hidden_size, it);
                 for (int i = 0; i < hidden_size; i++) {
                     it[i] = sigmoid(it[i]);
                 }
 
                 matrix_mul(&Wc[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
                            input_size + hidden_size, input_size + hidden_size, 1, tmp);
-                vector_add(tmp, bf[layer_idx], hidden_size, C_t1);
+                vector_add(tmp, bc[layer_idx], hidden_size, C_t1);
                 for (int i = 0; i < hidden_size; i++) {
                     C_t1[i] = tanh(C_t1[i]);
                 }
@@ -162,7 +168,7 @@ int main() {
                 //Output
                 matrix_mul(&Wo[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
                            input_size + hidden_size, input_size + hidden_size, 1, tmp);
-                vector_add(tmp, bf[layer_idx], hidden_size, ot);
+                vector_add(tmp, bo[layer_idx], hidden_size, ot);
                 for (int i = 0; i < hidden_size; i++) {
                     ot[i] = sigmoid(ot[i]);
                 }

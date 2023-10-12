@@ -30,7 +30,7 @@ class LSTMModel(nn.Module):
 # 定义模型参数
 input_size = 3  # 输入特征维度
 hidden_size = 64  # LSTM隐藏层大小
-num_layers = 3  # LSTM层数
+num_layers = 1  # LSTM层数
 
 # 创建LSTM模型实例
 model = LSTMModel(input_size, hidden_size, num_layers)
@@ -120,7 +120,7 @@ for i in range(batch_size):
         string_init += "},\n"
 string_init += "};\n"
 
-with open (path_c,'w') as file:
+with open(path_c, 'w') as file:
     print(string_init, file=file)
 print("Basic variables initialized!")
 
@@ -177,6 +177,9 @@ bo_str = f"double bo[{num_layers}][{hidden_size}] = {{\n"
 w_i_1, w_f_1, w_g_1, w_o_1 = None, None, None, None
 w_i_2, w_f_2, w_g_2, w_o_2 = None, None, None, None
 w_i, w_f, w_g, w_o = None, None, None, None
+b_i_1, b_f_1, b_g_1, b_o_1 = None, None, None, None
+b_i_2, b_f_2, b_g_2, b_o_2 = None, None, None, None
+b_i, b_f, b_g, b_o = None, None, None, None
 
 # 遍历参数并打印它们的形状
 for i, (name, param) in enumerate(params):
