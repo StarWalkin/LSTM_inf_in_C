@@ -138,7 +138,7 @@ int main() {
                 //遗忘门
                 double tmp[hidden_size];
                 matrix_mul(&Wf[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
-                           input_size + hidden_size, input_size + hidden_size, 1, tmp);
+                           2 * hidden_size, 2 * hidden_size, 1, tmp);
                 vector_add(tmp, bf[layer_idx], hidden_size, ft);
                 for (int i = 0; i < hidden_size; i++) {
                     ft[i] = sigmoid(ft[i]);
@@ -146,14 +146,14 @@ int main() {
 
                 //输入门
                 matrix_mul(&Wi[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
-                           input_size + hidden_size, input_size + hidden_size, 1, tmp);
+                           2 * hidden_size, 2 * hidden_size, 1, tmp);
                 vector_add(tmp, bi[layer_idx], hidden_size, it);
                 for (int i = 0; i < hidden_size; i++) {
                     it[i] = sigmoid(it[i]);
                 }
 
                 matrix_mul(&Wc[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
-                           input_size + hidden_size, input_size + hidden_size, 1, tmp);
+                           2 * hidden_size, 2 * hidden_size, 1, tmp);
                 vector_add(tmp, bc[layer_idx], hidden_size, C_t1);
                 for (int i = 0; i < hidden_size; i++) {
                     C_t1[i] = tanh(C_t1[i]);
@@ -167,7 +167,7 @@ int main() {
 
                 //Output
                 matrix_mul(&Wo[(layer_idx - 1) * ((hidden_size) * (2 * hidden_size))], cat_res, hidden_size,
-                           input_size + hidden_size, input_size + hidden_size, 1, tmp);
+                           2 * hidden_size, 2 * hidden_size, 1, tmp);
                 vector_add(tmp, bo[layer_idx], hidden_size, ot);
                 for (int i = 0; i < hidden_size; i++) {
                     ot[i] = sigmoid(ot[i]);

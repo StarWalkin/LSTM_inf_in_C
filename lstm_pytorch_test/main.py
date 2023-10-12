@@ -125,42 +125,6 @@ with open(path_c, 'w') as file:
 print("Basic variables initialized!")
 
 
-# size = hidden_size*(input_size+hidden_size)
-# string_init += f"extern double Wf0[{size1}];\n"
-# string_init += f"double Wi0[{size1}];\n"
-# string_init += f"double Wc0[{size1}];\n"
-# string_init += f"double Wo0[{size1}];\n"
-#
-# size2 = (num_layers-1)*((hidden_size)*(2*hidden_size))
-# string_init += f"double Wf[{size2}];\n"
-# string_init += f"double Wi[{size2}];\n"
-# string_init += f"double Wc[{size2}];\n"
-# string_init += f"double Wo[{size2}];\n"
-#
-# string_init += f"double bf[{num_layers}][{hidden_size}];\n"
-# string_init += f"double bi[{num_layers}][{hidden_size}];\n"
-# string_init += f"double bc[{num_layers}][{hidden_size}];\n"
-# string_init += f"double bo[{num_layers}][{hidden_size}];\n"
-
-# with open(path_h, 'w') as file:
-#     print("#ifndef INIT\n#define INIT", file=file)
-#     print(string_init, file=file)
-#     print("#endif", file=file)
-
-# # 获取 sequence 张量的形状
-# batch_size, seq_len, input_size = sequence.size()
-#
-# with open(path_c,"w") as file:
-#     print("\n",file=file)
-#
-# # 使用嵌套循环遍历每个元素
-# for i in range(batch_size):
-#     for j in range(seq_len):
-#         for k in range(input_size):
-#             with open(path_c,"a") as file:
-#                 value = sequence[i, j, k]
-#                 print(f"input_matrix[{j}][{k}] = {value};\n",file = file)
-
 # 获取所有参数
 params = list(model.named_parameters())
 
